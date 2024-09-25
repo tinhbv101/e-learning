@@ -1,0 +1,39 @@
+stages:
+  - pipeline
+
+variables:
+  GROUP: hcmute
+  NAME: e-learning-service
+  SERVICE_NAME: "${GROUP}-${NAME}"
+  IMAGE_NAME: "${GROUP}/${NAME}"
+  ECR_REGISTRY: ecr.tiktzuki.com
+
+auto-ci-dev:
+  stage: pipeline
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "refactor"
+      variables:
+        ENV_DEPLOY: $ENV_DEV
+  trigger:
+    include: ci/$CI_COMMIT_REF_NAME.yml
+    strategy: depend
+
+auto-ci-uat:
+  stage: pipeline
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "uat"
+      variables:
+        ENV_DEPLOY: $ENV_UAT
+  trigger:
+    include: ci/$CI_COMMIT_REF_NAME.yml
+    strategy: depend
+
+auto-ci-prod:
+  stage: pipeline
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "production"
+      variables:
+        ENV_DEPLOY: $ENV_PROD
+  trigger:
+    include: ci/$CI_COMMIT_REF_NAME.yml
+    strategy: depend
